@@ -33,5 +33,10 @@ namespace NoraPic
                 App.ViewModel.LoadData();
             }
         }
+
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }
