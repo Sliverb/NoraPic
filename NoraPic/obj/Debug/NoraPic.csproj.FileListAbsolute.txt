@@ -1,0 +1,15 @@
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\Bin\Debug\ApplicationIcon.png
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\Bin\Debug\Background.png
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\Bin\Debug\NoraPic.dll
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\Bin\Debug\NoraPic.pdb
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\Bin\Debug\AppManifest.xaml
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\Bin\Debug\NoraPic.xap
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\Bin\Debug\Microsoft.Phone.Controls.dll
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\Bin\Debug\Microsoft.Phone.Controls.xml
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\obj\Debug\ResolveAssemblyReference.cache
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\obj\Debug\App.g.i.cs
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\obj\Debug\MainPage.g.i.cs
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\obj\Debug\NoraPic.g.resources
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\obj\Debug\NoraPic.dll
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\obj\Debug\NoraPic.pdb
+c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\obj\Debug\XapCacheFile.xml
