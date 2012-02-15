@@ -41,7 +41,7 @@
  
             <!--Panorama item two-->
             <!--Use 'Orientation="Horizontal"' to enable a panel that lays out horizontally-->
-            <controls:PanoramaItem Header="deux item">
+            <controls:PanoramaItem Header="two item">
                 <!--Double line list with image placeholder and text wrapping-->
                 <ListBox Margin="0,0,-12,0" ItemsSource="{Binding Items}">
                     <ListBox.ItemTemplate>
