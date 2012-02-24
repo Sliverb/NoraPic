@@ -13,3 +13,6 @@ c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\obj\Debu
 c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\obj\Debug\NoraPic.dll
 c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\obj\Debug\NoraPic.pdb
 c:\users\baolatun\documents\visual studio 2010\Projects\NoraPic\NoraPic\obj\Debug\XapCacheFile.xml
+C:\Users\baolatun\Documents\Visual Studio 2010\Projects\NoraPic\NoraPic\Bin\Debug\Microsoft.Phone.Controls.Toolkit.dll
+C:\Users\baolatun\Documents\Visual Studio 2010\Projects\NoraPic\NoraPic\Bin\Debug\Microsoft.Phone.Controls.Toolkit.pdb
+C:\Users\baolatun\Documents\Visual Studio 2010\Projects\NoraPic\NoraPic\Bin\Debug\Microsoft.Phone.Controls.Toolkit.xml
