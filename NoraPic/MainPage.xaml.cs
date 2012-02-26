@@ -63,6 +63,7 @@ namespace NoraPic
             {
                 CapturedImage = new BitmapImage();
                 CapturedImage.SetSource(e.ChosenPhoto);
+                
                 //CapturedImage = PictureDecoder.DecodeJpeg(e.ChosenPhoto);
                 //myImage.Source = bmp;
                 //myImage.Stretch = Stretch.Uniform;

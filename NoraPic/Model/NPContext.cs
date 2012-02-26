@@ -8,21 +8,20 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-
+using System.Data.Linq;
+using System.Data.Linq.Mapping;
+using System.Data;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Linq;
+using System.Linq.Expressions;
+using System.ComponentModel;
+using System;
+	
 namespace NoraPic
 {
-	using System.Data.Linq;
-	using System.Data.Linq.Mapping;
-	using System.Data;
-	using System.Collections.Generic;
-	using System.Reflection;
-	using System.Linq;
-	using System.Linq.Expressions;
-	using System.ComponentModel;
-	using System;
 	
-	
-	public partial class NoraPic : System.Data.Linq.DataContext
+	public partial class NPContext : System.Data.Linq.DataContext
 	{
 		
 		private static System.Data.Linq.Mapping.MappingSource mappingSource = new AttributeMappingSource();
@@ -33,32 +32,14 @@ namespace NoraPic
     partial void UpdatePicManagement(PicManagement instance);
     partial void DeletePicManagement(PicManagement instance);
     #endregion
-		
-		public NoraPic(string connection) : 
+
+        public NPContext(string connection) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
 		}
 		
-		public NoraPic(System.Data.IDbConnection connection) : 
-				base(connection, mappingSource)
-		{
-			OnCreated();
-		}
-		
-		public NoraPic(string connection, System.Data.Linq.Mapping.MappingSource mappingSource) : 
-				base(connection, mappingSource)
-		{
-			OnCreated();
-		}
-		
-		public NoraPic(System.Data.IDbConnection connection, System.Data.Linq.Mapping.MappingSource mappingSource) : 
-				base(connection, mappingSource)
-		{
-			OnCreated();
-		}
-		
-		public System.Data.Linq.Table<@__VERSION> @__VERSION
+		public Table<@__VERSION> @__VERSION
 		{
 			get
 			{
@@ -66,7 +47,7 @@ namespace NoraPic
 			}
 		}
 		
-		public System.Data.Linq.Table<PicManagement> PicManagement
+		public Table<PicManagement> PicManagement
 		{
 			get
 			{
