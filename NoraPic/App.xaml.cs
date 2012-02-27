@@ -12,24 +12,29 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using NoraPic.Model;
+using System.Diagnostics;
+using NoraPic.ViewModels;
 
 namespace NoraPic
 {
     public partial class App : Application
     {
-        private static MainViewModel viewModel = null;
+        private static NpDbViewModel viewModel = null;
+        // Specify the local database connection string.
+        private static string DBConnectionString = "Data Source=isostore:/NpDb.sdf";
 
         /// <summary>
         /// A static ViewModel used by the views to bind against.
         /// </summary>
         /// <returns>The MainViewModel object.</returns>
-        public static MainViewModel ViewModel
+        public static NpDbViewModel ViewModel
         {
             get
             {
                 // Delay creation of the view model until necessary
                 if (viewModel == null)
-                    viewModel = new MainViewModel();
+                    viewModel = new NpDbViewModel(DBConnectionString);
 
                 return viewModel;
             }
@@ -74,6 +79,23 @@ namespace NoraPic
                 // and consume battery power when the user is not using the phone.
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
+
+            // Create the database if it does not exist.
+            using (NpDbContext db = new NpDbContext(DBConnectionString))
+            {
+                if (db.DatabaseExists() == false)
+                {
+                    // Create the local database.
+                    db.CreateDatabase();
+                    Debug.WriteLine("Db Created");
+                }
+            }
+
+            // Create the ViewModel object.
+            // viewModel = new ToDoViewModel(DBConnectionString);
+
+            // Query the local database and load observable collections.
+            //viewModel.LoadCollectionsFromDatabase();
 
         }
 

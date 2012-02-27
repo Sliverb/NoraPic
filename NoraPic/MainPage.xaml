@@ -25,74 +25,108 @@
                 <ImageBrush ImageSource="PanoramaBackground.png"/>
             </controls:Panorama.Background>
  
-            <!--Panorama item one-->
+            <!--Panorama item one-->            
             <controls:PanoramaItem Header="quick snap">
-                <Image Name="PicButton"
-                       Source="/Images/cam_icon.png"
-                       Width="350"
-                       Height="350"
-                       VerticalAlignment="Top"
-                       MouseEnter="takePhoto_imageButton_MouseEnter"
-                       MouseLeave="takePhoto_imageButton_MouseLeave"
-                       MouseLeftButtonDown="takePhoto_imageButton_MouseLeftButtonDown"
-                       MouseLeftButtonUp="takePhoto_imageButton_MouseLeftButtonUp"
-                />
+                <StackPanel>
+                    <Button Name="PicButton"
+                            MouseEnter="PicButton_MouseEnter"
+                            MouseLeave="PicButton_MouseLeave"
+                            Click="PicButton_Click"
+                            Margin="0,0,0,50">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Image Source="/Images/cam_icon.png"                                   
+                                       Width="350"
+                                       Height="350"
+                                       VerticalAlignment="Top"
+                                        />                            
+                            </ControlTemplate>                        
+                        </Button.Template>                    
+                    </Button>
+                    <TextBlock Name="Test"
+                               Margin="{StaticResource PhoneMargin}"
+                               Text="All Photos"
+                               Style="{StaticResource PhoneTextExtraLargeStyle}"
+                               Tap="Test_Tap"
+                        />
+                </StackPanel>
             </controls:PanoramaItem>
- 
+
             <!--Panorama item two-->
-            <!--Use 'Orientation="Horizontal"' to enable a panel that lays out horizontally-->
-            <controls:PanoramaItem Header="favorites">
-                <!--Double line list with image placeholder and text wrapping-->
-                <ListBox Margin="0,0,-12,0" ItemsSource="{Binding Items}">
+            <controls:PanoramaItem Header="favourites" Orientation="Horizontal">
+                <!--Double line list with image placeholder and text wrapping -->
+                <StackPanel>
+                    <ItemsControl Name="WrappedImages" Margin="0,0,-12,0" ItemsSource="{Binding AllImageItems}" Height="400" Width="800" VerticalAlignment="Top">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <toolkit:WrapPanel Name="testpannel"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,17">
+                                    <!--Replace rectangle with image -->
+                                    <StackPanel Width="200">
+                                        <Rectangle Height="160" Width="160" Fill="#FFE5001b" Margin="0,0,0,0"/>
+                                        <TextBlock Text="{Binding DateTaken}" TextWrapping="Wrap"  HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Text="All Favourites" 
+                               Name="AllFavs" 
+                               Margin="{StaticResource PhoneMargin}"
+                               Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+                </StackPanel>
+            </controls:PanoramaItem>
+
+            <!--Panorama item three-->
+            <controls:PanoramaItem Header="extras">
+                <!--Double line list with text wrapping-->
+                <ListBox Margin="0,0,-12,0">
+                    <TextBlock Text="Settings" 
+                               TextWrapping="Wrap" 
+                               Margin="{StaticResource PhoneMargin}"
+                               Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+                    <TextBlock Text="About" 
+                               TextWrapping="Wrap" 
+                               Margin="{StaticResource PhoneMargin}"
+                               Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+                </ListBox>
+            </controls:PanoramaItem>
+
+
+            <!--Panorama item two-->
+            <!--Use 'Orientation="Horizontal"' to enable a panel that lays out horizontally
+            <controls:PanoramaItem Header="recent">-->
+                <!--Double line list with image placeholder and text wrapping
+                <ListBox Margin="0,0,-12,0" ItemsSource="{Binding Items}" VerticalAlignment="Top">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,17">
-                                <!--Replace rectangle with image-->
-                                <Rectangle Height="100" Width="100" Fill="#FFE5001b" Margin="12,0,9,0"/>
-                                <StackPanel Width="311">                                    
-                                    <TextBlock Text="{Binding LineOne}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                                    <TextBlock Text="{Binding LineTwo}" TextWrapping="Wrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                            <StackPanel Orientation="Vertical" Margin="0,0,0,17">-->
+                                <!--Replace rectangle with image
+                                <StackPanel Width="311" HorizontalAlignment="Left" Margin="0,0,0,10">
+                                    <TextBlock Text="{Binding LineOne}" 
+                                               TextWrapping="Wrap" 
+                                               Style="{StaticResource PhoneTextExtraLargeStyle}"/>                                    
                                 </StackPanel>
+                                <StackPanel Orientation="horizontal" Width="400">
+                                    <Rectangle Height="110" Width="110" Fill="#FFE5001b" Margin="12,0,9,0"/>
+                                    <Rectangle Height="110" Width="110" Fill="#FFE5001b" Margin="12,0,9,0"/>
+                                    <Rectangle Height="110" Width="110" Fill="#FFE5001b" Margin="12,0,9,0"/>
+                                </StackPanel>                                
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
             </controls:PanoramaItem>
+             -->
 
-            <controls:PanoramaItem Header="second item" Orientation="Horizontal">
-                <!--Double line list with image placeholder and text wrapping -->
-                <StackPanel>
-                <ItemsControl Name="WrappedImages" Margin="0,0,-12,0" ItemsSource="{Binding Items}" Height="400" Width="800" VerticalAlignment="Top">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <toolkit:WrapPanel Name="testpannel"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,17">
-                                <!--Replace rectangle with image -->
-                                <StackPanel Width="200">
-                                    <Rectangle Height="160" Width="160" Fill="#FFE5001b" Margin="0,0,0,0"/>
-                                    <TextBlock Text="{Binding LineOne}" TextWrapping="Wrap"  HorizontalAlignment="Center"/>
-                                </StackPanel>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-                    <Button Name="Clearall"
-                            Content="Clear"
-                            HorizontalAlignment="left"
-                            Width="400"
-                            Click="Clearall_Event"
-                            />
-                </StackPanel>
-            </controls:PanoramaItem> 
-
-            <!--Panorama item three-->
-            <controls:PanoramaItem Header="all pictures">
-                <!--Double line list with text wrapping-->
+            <!--Panorama item three
+            <controls:PanoramaItem Header="all pictures"> -->
+                <!--Double line list with text wrapping
                 <ListBox Margin="0,0,-12,0" ItemsSource="{Binding Items}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -104,7 +138,8 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </controls:PanoramaItem>
-            
+            -->
+        
         </controls:Panorama>
     </Grid>
 </phone:PhoneApplicationPage>

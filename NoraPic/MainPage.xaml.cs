@@ -48,7 +48,7 @@ namespace NoraPic
         {
             if (!App.ViewModel.IsDataLoaded)
             {
-                App.ViewModel.LoadData();
+                App.ViewModel.LoadCollectionsFromDatabase();
             }
         }
 
@@ -63,7 +63,13 @@ namespace NoraPic
             {
                 CapturedImage = new BitmapImage();
                 CapturedImage.SetSource(e.ChosenPhoto);
-                
+
+                string imgSize = (e.ChosenPhoto.Length / 1024).ToString();
+                string Height = CapturedImage.PixelHeight.ToString();
+                string Width = CapturedImage.PixelWidth.ToString();
+
+                MessageBox.Show("Size: " + imgSize + Environment.NewLine + "Dim: " + Height + "x" + Width);
+
                 //CapturedImage = PictureDecoder.DecodeJpeg(e.ChosenPhoto);
                 //myImage.Source = bmp;
                 //myImage.Stretch = Stretch.Uniform;
@@ -79,25 +85,39 @@ namespace NoraPic
             }
         }
 
-        private void takePhoto_imageButton_MouseEnter(object sender, MouseEventArgs e)
+        private void PicButton_MouseEnter(object sender, MouseEventArgs e)
         {
             PicButton.Opacity = 0.5;
         }
-        private void takePhoto_imageButton_MouseLeave(object sender, MouseEventArgs e)
+
+        private void PicButton_MouseLeave(object sender, MouseEventArgs e)
         {
             PicButton.Opacity = 1.0;
         }
-        private void takePhoto_imageButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+
+        private void PicButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             PicButton.Opacity = 0.5;
         }
-        private void takePhoto_imageButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+
+        private void PicButton_Click(object sender, RoutedEventArgs e)
         {
             PicButton.Opacity = 1.0;
             //CurrentStatus = "Chooser";
             ctask.Show();
         }
 
+        private void Test_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            MessageBox.Show("HI");
+        }
+
+        private void StoreImageItem(BitmapImage CapturedImage)
+        {
+
+        }
+
+        /**
         private void Clearall_Event(object sender, RoutedEventArgs e)
         {
             if (Clearall.Content.Equals("Clear"))
@@ -114,5 +134,6 @@ namespace NoraPic
             }
 
         }
+        **/
     }
 }

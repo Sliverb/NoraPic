@@ -19,12 +19,10 @@ namespace NoraPic.Model
         // Pass the connection string to the base class.
         public NpDbContext(string connectionString)
             : base(connectionString)
-        {
-
-        }
+        { }
 
         // Specify a table for the images.
-        public Table<ImageItem> Images;
+        public Table<ImageItem> NPImages;
     }
 
     [Table]
@@ -34,7 +32,7 @@ namespace NoraPic.Model
         // Define Image Name, Used as ID. Private field, public property and DB Column.
         private string _ImageName;
 
-        [Column(Storage = "_imageName", DbType = "NVarChar(100) NOT NULL", CanBeNull = false, IsPrimaryKey = true, AutoSync = AutoSync.OnInsert)
+        [Column(Storage = "_ImageName", DbType = "NVarChar(100) NOT NULL", CanBeNull = false, IsPrimaryKey = true, AutoSync = AutoSync.OnInsert)]
         public string ImageName
         {
             get { return _ImageName; }
@@ -208,5 +206,16 @@ namespace NoraPic.Model
         }
 
         #endregion
+
+        #region Extensibility Method Definitions
+        private void OnLoaded(){}
+        private void OnValidate(ChangeAction action){}
+        private void OnCreated(){}
+        #endregion
+		
+		public ImageItem()
+		{
+			OnCreated();
+		}
     }
 }
