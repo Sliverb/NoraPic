@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Tasks;
-using Microsoft.Phone;
 using System.Windows.Media.Imaging;
+using NoraPic.Model;
+using System.Device.Location;
+using Microsoft.Phone;
+using System.IO;
+using Microsoft.Phone.Info;
 
 namespace NoraPic
 {
@@ -21,11 +18,13 @@ namespace NoraPic
         //The camera chooser used to capture a picture.
         CameraCaptureTask ctask;
 
-        BitmapImage CapturedImage;
+        WriteableBitmap CapturedImage;
 
-       // private const String ApplicationStatus = "ProgramStatus";
-
-        //String CurrentStatus;
+        // In this case,since we're not working with a device, I'll just
+        // set a default value.  If we cannot get the current location,
+        // then we'll default to Redmond, WA.
+        double latitude;
+        double longitude;
 
         // Constructor
         public MainPage()
@@ -50,6 +49,28 @@ namespace NoraPic
             {
                 App.ViewModel.LoadCollectionsFromDatabase();
             }
+
+            // When the page is instantiated, we'll begin the process
+            // of acquiring the physical location of the user to 
+            // add to the note's file name.  This is async, requiring
+            // us to implement a __Completed event.
+            try
+            {
+                GeoCoordinateWatcher myWatcher = new GeoCoordinateWatcher();
+
+                var myPosition = myWatcher.Position;
+
+                if (!myPosition.Location.IsUnknown)
+                {
+                    latitude = myPosition.Location.Latitude;
+                    longitude = myPosition.Location.Longitude;
+                }
+         
+            }
+            catch
+            {
+                // Ignore ... for now
+            } 
         }
 
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -61,15 +82,17 @@ namespace NoraPic
         {
             if (e.TaskResult == TaskResult.OK)
             {
-                CapturedImage = new BitmapImage();
-                CapturedImage.SetSource(e.ChosenPhoto);
+                //CapturedImage = new WriteableBitmap();
+
+                CapturedImage = PictureDecoder.DecodeJpeg(e.ChosenPhoto);
+                //CapturedImage.Resize();
 
                 string imgSize = (e.ChosenPhoto.Length / 1024).ToString();
                 string Height = CapturedImage.PixelHeight.ToString();
                 string Width = CapturedImage.PixelWidth.ToString();
-
-                MessageBox.Show("Size: " + imgSize + Environment.NewLine + "Dim: " + Height + "x" + Width);
-
+                long memoryRemaining = (long) DeviceExtendedProperties.GetValue("ApplicationCurrentMemoryUsage");
+                MessageBox.Show("Mem: " + memoryRemaining + "Size: " + imgSize + Environment.NewLine + "Dim: " + Height + "x" + Width);
+                StoreImageItem();
                 //CapturedImage = PictureDecoder.DecodeJpeg(e.ChosenPhoto);
                 //myImage.Source = bmp;
                 //myImage.Stretch = Stretch.Uniform;
@@ -83,6 +106,8 @@ namespace NoraPic
                 //statusText.Text = "Task Result Error: " + e.TaskResult.ToString();
                 MessageBox.Show("Error");
             }
+
+            CapturedImage = null;
         }
 
         private void PicButton_MouseEnter(object sender, MouseEventArgs e)
@@ -112,8 +137,20 @@ namespace NoraPic
             MessageBox.Show("HI");
         }
 
-        private void StoreImageItem(BitmapImage CapturedImage)
+        private void StoreImageItem()
         {
+            ImageItem TempImageItem = new ImageItem();
+            TempImageItem.ImageName = Guid.NewGuid().ToString() + ".jpg";
+            TempImageItem.IsSync = false;
+            TempImageItem.IsCached = true;
+            TempImageItem.IsFav = true;
+            TempImageItem.DateTaken = DateTime.Now;
+            TempImageItem.Latitude = latitude;
+            TempImageItem.Longitude = longitude;
+            TempImageItem.Comments = "Test Comment";
+            TempImageItem.SaveImage(CapturedImage);
+
+            App.ViewModel.AddImageItem(TempImageItem);
 
         }
 

@@ -51,27 +51,30 @@
                         />
                 </StackPanel>
             </controls:PanoramaItem>
-
+                        
             <!--Panorama item two-->
             <controls:PanoramaItem Header="favourites" Orientation="Horizontal">
                 <!--Double line list with image placeholder and text wrapping -->
                 <StackPanel>
-                    <ItemsControl Name="WrappedImages" Margin="0,0,-12,0" ItemsSource="{Binding AllImageItems}" Height="400" Width="800" VerticalAlignment="Top">
+                    <ItemsControl Name="WrappedImages" 
+                                  Margin="0,0,-12,0" 
+                                  ItemsSource="{Binding AllImageItems}" 
+                                  Height="400" Width="Auto" 
+                                  VerticalAlignment="Top"
+                                  >
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <toolkit:WrapPanel Name="testpannel"/>
+                                <toolkit:WrapPanel Name="testpannel" Orientation="Vertical"/>
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
 
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,17">
                                     <!--Replace rectangle with image -->
                                     <StackPanel Width="200">
-                                        <Rectangle Height="160" Width="160" Fill="#FFE5001b" Margin="0,0,0,0"/>
-                                        <TextBlock Text="{Binding DateTaken}" TextWrapping="Wrap"  HorizontalAlignment="Center"/>
+                                        <Image Name="PrevHolder" Height="160" Width="160" Source="{Binding PreviewImage}" Margin="0,0,0,0"/>
+                                        <TextBlock Text="{Binding DateTaken}" TextWrapping="NoWrap"  HorizontalAlignment="Center"/>
                                     </StackPanel>
-                                </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

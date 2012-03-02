@@ -11,6 +11,10 @@ using System.Windows.Shapes;
 using System.Data.Linq;
 using System.ComponentModel;
 using System.Data.Linq.Mapping;
+using System.Windows.Media.Imaging;
+using System.IO.IsolatedStorage;
+using System.IO;
+using Microsoft.Phone;
 
 namespace NoraPic.Model
 {
@@ -212,6 +216,92 @@ namespace NoraPic.Model
         private void OnValidate(ChangeAction action){}
         private void OnCreated(){}
         #endregion
+
+        // Define
+        private WriteableBitmap _CapturedImage;
+
+        public WriteableBitmap CapturedImage
+        {
+            get { return _CapturedImage; }
+            set
+            {
+                if (_CapturedImage != value)
+                {
+                    NotifyPropertyChanging("CapturedImage");
+                    _CapturedImage = value;
+                    NotifyPropertyChanged("CapturedImage");
+                }
+            }
+        }
+
+        private WriteableBitmap _PreviewImage;
+
+        public WriteableBitmap PreviewImage
+        {
+            get { return _PreviewImage; }
+            set
+            {
+                if (_PreviewImage != value)
+                {
+                    NotifyPropertyChanging("PreviewImage");
+                    _PreviewImage = value;
+                    NotifyPropertyChanged("PreviewImage");
+                }
+            }
+        }
+
+        // Storage methods
+        # region Methods dealing with ISO Storage
+
+        public void SaveImage(WriteableBitmap CapedImage)
+        {
+            CapturedImage = CapedImage;
+            //GeneratePreview();
+            using (IsolatedStorageFile appStore = IsolatedStorageFile.GetUserStoreForApplication())
+            using (IsolatedStorageFileStream fileStream = appStore.CreateFile(this.ImageName))
+                Extensions.SaveJpeg(CapedImage, fileStream, CapedImage.PixelWidth, CapedImage.PixelHeight, 0, 85);
+        }
+
+        public void LoadImage()
+        {
+            using (IsolatedStorageFile appStore = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                if (appStore.FileExists(this.ImageName))
+                {
+                    using (IsolatedStorageFileStream fileStream = appStore.OpenFile(this.ImageName, FileMode.Open))
+                    {
+                        CapturedImage = PictureDecoder.DecodeJpeg(fileStream);
+                        //GeneratePreview();
+                    }
+                }
+            }
+        }
+
+        public void DeleteContent()
+        {
+            using (IsolatedStorageFile appStore = IsolatedStorageFile.GetUserStoreForApplication())
+                appStore.DeleteFile(this.ImageName);
+        }
+        # endregion 
+
+        private WriteableBitmap GeneratePreview(WriteableBitmap WBImage, double maxWidth, double maxHeight)
+        {
+            double scaleX = 1;
+            double scaleY = 1;
+
+            if (WBImage.PixelHeight > maxHeight)
+                scaleY = Math.Min(maxHeight / WBImage.PixelHeight, 1);
+            if (WBImage.PixelWidth > maxWidth)
+                scaleX = Math.Min(maxWidth / WBImage.PixelWidth, 1);
+
+            // maintain aspect ratio by picking the most severe scale
+            double scale = Math.Min(scaleY, scaleX);
+
+
+            WriteableBitmap retImage = WBImage.Resize((int)(scale * WBImage.PixelWidth), (int)(scale * WBImage.PixelHeight), WriteableBitmapExtensions.Interpolation.Bilinear);
+            MessageBox.Show("Dim: " + PreviewImage.PixelHeight + "x" + PreviewImage.PixelWidth);
+            return retImage;
+        }
 		
 		public ImageItem()
 		{

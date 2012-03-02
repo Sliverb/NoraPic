@@ -4,6 +4,8 @@ using System.Linq;
 
 // Directive of the data model
 using NoraPic.Model;
+using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace NoraPic.ViewModels
 {
@@ -67,9 +69,13 @@ namespace NoraPic.ViewModels
             // Specify the query for all to-do items in the database.
             var ImagesItemsInDb = from ImageItem image in ImageDB.NPImages
                                 select image;
+            Debug.WriteLine("Query Create");
 
             // Query the database and load all to-do items.
             AllImageItems = new ObservableCollection<ImageItem>(ImagesItemsInDb);
+            Debug.WriteLine("Images now in Collection");
+
+            AllFavImages = new ObservableCollection<ImageItem>();
 
             // Query the database and load all associated items to their respective collections.
             foreach (ImageItem image in ImagesItemsInDb)
@@ -79,9 +85,19 @@ namespace NoraPic.ViewModels
                     AllFavImages.Add(image);
                 }
             }
+            Debug.WriteLine("All Favs Created");
 
             // Load a list of all categories.
-            MainFavImages = AllFavImages;
+            int AllFavLength = (AllFavImages == null)? 0 : AllFavImages.Count;
+            int MaxLength = 8;
+            if (AllFavLength > 0)
+            {
+                if (AllFavLength <= MaxLength)
+                    MainFavImages = new ObservableCollection<ImageItem>(AllFavImages.Skip(0).Take(AllFavLength));
+                else
+                    MainFavImages = new ObservableCollection<ImageItem>(AllFavImages.Skip(0).Take(MaxLength));
+            }
+            Debug.WriteLine("Main Favs Created");
 
         }
 
@@ -96,7 +112,9 @@ namespace NoraPic.ViewModels
 
             // Add a to-do item to the "all" observable collection.
             AllImageItems.Add(newImageItem);
+            Debug.WriteLine("Image Added");
         }
+
         #region INotifyPropertyChanged Members
 
         public event PropertyChangedEventHandler PropertyChanged;
