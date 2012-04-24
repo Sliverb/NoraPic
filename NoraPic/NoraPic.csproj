@@ -48,6 +48,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ExifLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone" />
     <Reference Include="Microsoft.Phone.Controls" />
     <Reference Include="Microsoft.Phone.Controls.Toolkit, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b772ad94eb9ca604, processorArchitecture=MSIL" />
@@ -65,6 +66,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Includes\IsoImageConverter.cs" />
     <Compile Include="Includes\Slide.cs" />
     <Compile Include="Includes\WriteableBitmapBaseExtentions.cs" />
     <Compile Include="Includes\WriteableBitmapTransformationExtentions.cs" />
@@ -104,6 +106,7 @@
     </Content>
     <Resource Include="PanoramaBackground.png" />
     <Content Include="Images\cam_icon.png" />
+    <Content Include="Lib\ExifLib.dll" />
     <Content Include="SplashScreenImage.jpg" />
   </ItemGroup>
   <ItemGroup />

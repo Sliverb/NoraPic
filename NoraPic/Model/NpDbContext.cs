@@ -32,6 +32,8 @@ namespace NoraPic.Model
     [Table]
     public class ImageItem : INotifyPropertyChanged, INotifyPropertyChanging
     {
+        const string imageFolder = "Images";
+        const string thumbFolder = "Thumbnails";
 
         // Define Image Name, Used as ID. Private field, public property and DB Column.
         private string _ImageName;
@@ -217,52 +219,61 @@ namespace NoraPic.Model
         private void OnCreated(){}
         #endregion
 
-        // Define
-        private WriteableBitmap _CapturedImage;
-
-        public WriteableBitmap CapturedImage
-        {
-            get { return _CapturedImage; }
-            set
-            {
-                if (_CapturedImage != value)
-                {
-                    NotifyPropertyChanging("CapturedImage");
-                    _CapturedImage = value;
-                    NotifyPropertyChanged("CapturedImage");
-                }
-            }
-        }
-
-        private WriteableBitmap _PreviewImage;
-
-        public WriteableBitmap PreviewImage
-        {
-            get { return _PreviewImage; }
-            set
-            {
-                if (_PreviewImage != value)
-                {
-                    NotifyPropertyChanging("PreviewImage");
-                    _PreviewImage = value;
-                    NotifyPropertyChanged("PreviewImage");
-                }
-            }
-        }
+        // Image URI
+        public string imageUri { get; set; }
+        public string thumbUri { get; set; }
 
         // Storage methods
         # region Methods dealing with ISO Storage
 
-        public void SaveImage(WriteableBitmap CapedImage)
+        public void SaveImage(Stream image, Stream thumbnail)
         {
-            CapturedImage = CapedImage;
-            //GeneratePreview();
+            CreateURIs();
+
+            string imgPath = imageFolder + System.IO.Path.DirectorySeparatorChar.ToString() + ImageName;
+            string thumbPath = thumbFolder + System.IO.Path.DirectorySeparatorChar.ToString() + ImageName; 
+
+            BitmapImage imgBitmap = new BitmapImage();
+            imgBitmap.SetSource(image);
+            WriteableBitmap capedImage = new WriteableBitmap(imgBitmap);
+
+            BitmapImage thumbBitmap = new BitmapImage();
+            thumbBitmap.SetSource(thumbnail);
+            WriteableBitmap capedThumb = new WriteableBitmap(thumbBitmap);
+
             using (IsolatedStorageFile appStore = IsolatedStorageFile.GetUserStoreForApplication())
-            using (IsolatedStorageFileStream fileStream = appStore.CreateFile(this.ImageName))
-                Extensions.SaveJpeg(CapedImage, fileStream, CapedImage.PixelWidth, CapedImage.PixelHeight, 0, 85);
+            {
+                if (!string.IsNullOrEmpty(imageFolder) && !appStore.DirectoryExists(imageFolder))
+                {
+                    appStore.CreateDirectory(imageFolder);
+                    appStore.CreateDirectory(thumbFolder);
+                }  
+
+                using (IsolatedStorageFileStream imgStream = appStore.CreateFile(imgPath))
+                {
+                    capedImage.SaveJpeg(imgStream, capedImage.PixelWidth, capedImage.PixelHeight, 0, 100);
+                    imgStream.Close();
+                }
+
+                using (IsolatedStorageFileStream thumbStream = appStore.CreateFile(thumbPath))
+                {
+                    capedThumb.SaveJpeg(thumbStream, capedThumb.PixelWidth, capedThumb.PixelHeight, 0, 100);
+                    thumbStream.Close();
+                }
+            }
         }
 
-        public void LoadImage()
+        public void CreateURIs()
+        {
+            /**
+            imageUri = String.Format("/{0}/{1}", imageFolder, ImageName);
+            thumbUri = String.Format("/{0}/{1}", thumbFolder, ImageName);
+            **/
+            imageUri = imageFolder + System.IO.Path.DirectorySeparatorChar.ToString() + ImageName;
+            thumbUri = thumbFolder + System.IO.Path.DirectorySeparatorChar.ToString() + ImageName; 
+        }
+
+        public WriteableBitmap LoadImage()
         {
             using (IsolatedStorageFile appStore = IsolatedStorageFile.GetUserStoreForApplication())
             {
@@ -270,9 +281,12 @@ namespace NoraPic.Model
                 {
                     using (IsolatedStorageFileStream fileStream = appStore.OpenFile(this.ImageName, FileMode.Open))
                     {
-                        CapturedImage = PictureDecoder.DecodeJpeg(fileStream);
-                        //GeneratePreview();
+                        return PictureDecoder.DecodeJpeg(fileStream);
                     }
+                }
+                else
+                {
+                    return null;
                 }
             }
         }
@@ -284,25 +298,6 @@ namespace NoraPic.Model
         }
         # endregion 
 
-        private WriteableBitmap GeneratePreview(WriteableBitmap WBImage, double maxWidth, double maxHeight)
-        {
-            double scaleX = 1;
-            double scaleY = 1;
-
-            if (WBImage.PixelHeight > maxHeight)
-                scaleY = Math.Min(maxHeight / WBImage.PixelHeight, 1);
-            if (WBImage.PixelWidth > maxWidth)
-                scaleX = Math.Min(maxWidth / WBImage.PixelWidth, 1);
-
-            // maintain aspect ratio by picking the most severe scale
-            double scale = Math.Min(scaleY, scaleX);
-
-
-            WriteableBitmap retImage = WBImage.Resize((int)(scale * WBImage.PixelWidth), (int)(scale * WBImage.PixelHeight), WriteableBitmapExtensions.Interpolation.Bilinear);
-            MessageBox.Show("Dim: " + PreviewImage.PixelHeight + "x" + PreviewImage.PixelWidth);
-            return retImage;
-        }
-		
 		public ImageItem()
 		{
 			OnCreated();

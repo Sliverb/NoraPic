@@ -80,6 +80,8 @@ namespace NoraPic.ViewModels
             // Query the database and load all associated items to their respective collections.
             foreach (ImageItem image in ImagesItemsInDb)
             {
+                image.CreateURIs(); 
+
                 if ((bool)image.IsFav)
                 {
                     AllFavImages.Add(image);
@@ -99,11 +101,13 @@ namespace NoraPic.ViewModels
             }
             Debug.WriteLine("Main Favs Created");
 
+            //this.IsDataLoaded = true;
+
         }
 
-        // Add a to-do item to the database and collections.
+        // Add a image item to the database and collections.
         public void AddImageItem(ImageItem newImageItem)
-        {
+        {        
             // Add a to-do item to the data context.
             ImageDB.NPImages.InsertOnSubmit(newImageItem);
 

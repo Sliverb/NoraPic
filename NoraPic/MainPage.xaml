@@ -8,6 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:local="clr-namespace:NoraPic.Includes"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="800" 
     d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
@@ -16,6 +17,10 @@
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="False">
 
+    <phone:PhoneApplicationPage.Resources>
+        <local:IsoImageConverter x:Key="IsoImageCoverter"/>
+    </phone:PhoneApplicationPage.Resources>
+    
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
  
@@ -58,7 +63,7 @@
                 <StackPanel>
                     <ItemsControl Name="WrappedImages" 
                                   Margin="0,0,-12,0" 
-                                  ItemsSource="{Binding AllImageItems}" 
+                                  ItemsSource="{Binding MainFavImages}" 
                                   Height="400" Width="Auto" 
                                   VerticalAlignment="Top"
                                   >
@@ -72,8 +77,9 @@
                             <DataTemplate>
                                     <!--Replace rectangle with image -->
                                     <StackPanel Width="200">
-                                        <Image Name="PrevHolder" Height="160" Width="160" Source="{Binding PreviewImage}" Margin="0,0,0,0"/>
-                                        <TextBlock Text="{Binding DateTaken}" TextWrapping="NoWrap"  HorizontalAlignment="Center"/>
+                                    <Image Name="PrevHolder" Height="160" Width="160" Stretch="UniformToFill" Source="{Binding thumbUri, Converter={StaticResource IsoImageCoverter}}" Margin="0,0,0,0">
+                                    </Image>
+                                    <TextBlock Text="{Binding DateTaken}" TextWrapping="NoWrap"  HorizontalAlignment="Center"/>
                                     </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -83,6 +89,21 @@
                                Margin="{StaticResource PhoneMargin}"
                                Style="{StaticResource PhoneTextExtraLargeStyle}"/>
                 </StackPanel>
+            </controls:PanoramaItem>
+
+            <!--Panorama item three -->
+            <controls:PanoramaItem Header="recent">
+            <!--Double line list with text wrapping -->
+                <ListBox Margin="0,0,-12,0" ItemsSource="{Binding Items}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,0,0,17" Width="432" Height="78">
+                                <TextBlock Text="{Binding LineOne}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+                                <TextBlock Text="{Binding LineTwo}" TextWrapping="Wrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </controls:PanoramaItem>
 
             <!--Panorama item three-->
@@ -113,7 +134,12 @@
                                 <StackPanel Width="311" HorizontalAlignment="Left" Margin="0,0,0,10">
                                     <TextBlock Text="{Binding LineOne}" 
                                                TextWrapping="Wrap" 
-                                               Style="{StaticResource PhoneTextExtraLargeStyle}"/>                                    
+                                               Style="{StaticResource PhoneTextExtraLargeStyle}"/>         
+            
+            
+            <Image Name="PrevHolder" Height="160" Width="160" Stretch="UniformToFill" Source="{Binding thumbUri, Converter={StaticResource IsoImageCoverter}}" Margin="0,0,0,0">         
+            
+            
                                 </StackPanel>
                                 <StackPanel Orientation="horizontal" Width="400">
                                     <Rectangle Height="110" Width="110" Fill="#FFE5001b" Margin="12,0,9,0"/>
