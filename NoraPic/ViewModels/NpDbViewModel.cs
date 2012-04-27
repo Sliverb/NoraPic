@@ -6,6 +6,8 @@ using System.Linq;
 using NoraPic.Model;
 using System.Diagnostics;
 using System.Collections.Generic;
+using NoraPic.Includes;
+using System.Windows;
 
 namespace NoraPic.ViewModels
 {
@@ -26,9 +28,27 @@ namespace NoraPic.ViewModels
             private set;
         }
 
+        public bool IsAllFavLoaded
+        {
+            get;
+            private set;
+        }
+
+        public bool IsMainFavLoaded
+        {
+            get;
+            private set;
+        }
+
+        public bool IsRecentLoaded
+        {
+            get;
+            private set;
+        }
+       
         // Main Pivot Fav items (8 max)
-        private ObservableCollection<ImageItem> _AllImageItems;
-        public ObservableCollection<ImageItem> AllImageItems
+        private ObservableCollection<ImagesInCategory> _AllImageItems;
+        public ObservableCollection<ImagesInCategory> AllImageItems
         {
             get { return _AllImageItems; }
             set
@@ -39,8 +59,8 @@ namespace NoraPic.ViewModels
         }
 
         // Main Pivot Fav items (8 max)
-        private ObservableCollection<ImageItem> _AllFavImages;
-        public ObservableCollection<ImageItem> AllFavImages
+        private ObservableCollection<string> _AllFavImages;
+        public ObservableCollection<string> AllFavImages
         {
             get { return _AllFavImages; }
             set
@@ -51,8 +71,8 @@ namespace NoraPic.ViewModels
         }
 
         // Main Pivot Fav items (8 max)
-        private ObservableCollection<ImageItem> _MainFavImages;
-        public ObservableCollection<ImageItem> MainFavImages
+        private ObservableCollection<string> _MainFavImages;
+        public ObservableCollection<string> MainFavImages
         {
             get { return _MainFavImages; }
             set
@@ -66,43 +86,73 @@ namespace NoraPic.ViewModels
         public void LoadCollectionsFromDatabase()
         {
 
-            // Specify the query for all to-do items in the database.
+            // Specify the query for images in the database and grouped by "month year".
             var ImagesItemsInDb = from ImageItem image in ImageDB.NPImages
-                                select image;
+                                  group image by image.DisplayDateTimeString;
+
             Debug.WriteLine("Query Create");
 
-            // Query the database and load all to-do items.
-            AllImageItems = new ObservableCollection<ImageItem>(ImagesItemsInDb);
-            Debug.WriteLine("Images now in Collection");
+            AllImageItems = new ObservableCollection<ImagesInCategory>();
 
-            AllFavImages = new ObservableCollection<ImageItem>();
-
-            // Query the database and load all associated items to their respective collections.
-            foreach (ImageItem image in ImagesItemsInDb)
+            // Query the database and load all images and group them.
+            Deployment.Current.Dispatcher.BeginInvoke(() =>
             {
-                image.CreateURIs(); 
-
-                if ((bool)image.IsFav)
+                foreach (var monthYear in ImagesItemsInDb)
                 {
-                    AllFavImages.Add(image);
+                    ImagesInCategory group = new ImagesInCategory(monthYear.Key);
+                    if (monthYear.Count() != 0)
+                    {
+                        foreach (ImageItem image in monthYear)
+                        {
+                            image.CreateURIs();
+                            group.Add(image);                           
+                        }
+                    }
+                    AllImageItems.Add(group);
                 }
-            }
+
+            });                      
+
+            Debug.WriteLine("Images now in Collection");
+            
+            this.IsDataLoaded = true;
+        }
+
+        public void LoadAllFavs()
+        {
+            AllFavImages = Settings.Favourites.Value;
+
             Debug.WriteLine("All Favs Created");
 
-            // Load a list of all categories.
-            int AllFavLength = (AllFavImages == null)? 0 : AllFavImages.Count;
+            this.IsAllFavLoaded = true;
+        }
+
+        public void LoadMainFavs()
+        {
+            // Load a list of the favourites on the main page.
+            int AllFavLength = (AllFavImages == null) ? 0 : AllFavImages.Count;
             int MaxLength = 8;
-            if (AllFavLength > 0)
+            MainFavImages = new ObservableCollection<string>(AllFavImages.Reverse().Take(MaxLength));
+            
+            Debug.WriteLine("Main Favs Created");
+
+            this.IsMainFavLoaded = true;
+        }
+
+        public void LoadRecents()
+        {
+            // Load a list of the recents on the main page.
+            /**
+            int AllImageLength = (AllImageItems == null) ? 0 : AllImageItems.Count;
+            int MaxLength = 8;
+            if (AllImageLength > 0)
             {
-                if (AllFavLength <= MaxLength)
-                    MainFavImages = new ObservableCollection<ImageItem>(AllFavImages.Skip(0).Take(AllFavLength));
-                else
-                    MainFavImages = new ObservableCollection<ImageItem>(AllFavImages.Skip(0).Take(MaxLength));
+                MainFavImages = new ObservableCollection<ImageItem>(AllFavImages.Reverse().Take(MaxLength));
             }
             Debug.WriteLine("Main Favs Created");
 
-            //this.IsDataLoaded = true;
-
+            this.IsRecentLoaded = true;
+            **/
         }
 
         // Add a image item to the database and collections.
@@ -115,8 +165,31 @@ namespace NoraPic.ViewModels
             ImageDB.SubmitChanges();
 
             // Add a to-do item to the "all" observable collection.
-            AllImageItems.Add(newImageItem);
+            var rawCategory = AllImageItems.Where(monthYear => monthYear.Key == newImageItem.DisplayDateTimeString);
+            if (rawCategory.Count() > 0)
+            {
+                rawCategory.FirstOrDefault().Add(newImageItem);
+            }
+        
             Debug.WriteLine("Image Added");
+        }
+
+        public void AddFavImage(string newImageUri)
+        {
+            //Add the image to the list of all favourites
+            //Settings.Favourites.Value.Add(newImageUri);
+            AllFavImages.Add(newImageUri);
+
+            //Update the list of main faorites to have the latest added favourites
+            // remove the last one and add in the new one
+            int MainFavLength = (MainFavImages == null) ? 0 : MainFavImages.Count;
+            int MaxLength = 8;
+            if (MainFavLength >= MaxLength)
+                MainFavImages.Remove(MainFavImages.Last());
+
+            MainFavImages.Insert(0, newImageUri);
+
+            Debug.WriteLine("Favourites Updated");
         }
 
         #region INotifyPropertyChanged Members
@@ -131,6 +204,80 @@ namespace NoraPic.ViewModels
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+        #endregion
+
+        #region oldCode
+        /**
+        public void LoadAllFavs()
+        {
+            AllFavImages = new ObservableCollection<ImageItem>();
+
+            // Query the database and load all associated items to their respective collections.
+            foreach (ImageItem image in AllImageItems)
+            {
+                image.CreateURIs();
+
+                if ((bool)image.IsFav)
+                {
+                    AllFavImages.Add(image);
+                }
+            }
+            Debug.WriteLine("All Favs Created");
+
+            this.IsAllFavLoaded = true;
+        }          
+         
+        public void LoadMainFavs()
+        {
+            // Load a list of the favourites on the main page.
+            int AllFavLength = (AllFavImages == null) ? 0 : AllFavImages.Count;
+            int MaxLength = 8;
+            if (AllFavLength > 0)
+            {
+                MainFavImages = new ObservableCollection<ImageItem>(AllFavImages.Reverse().Take(MaxLength));
+            }
+            Debug.WriteLine("Main Favs Created");
+
+            this.IsMainFavLoaded = true;
+        }   
+          
+        public void AddFavImage(string newImageUri)
+        {
+            //Add the image to the list of all favourites
+            AllFavImages.Add(newImageUri);
+
+            //Update the list of main faorites to have the latest added favourites
+            // remove the last one and add in the new one
+            int MainFavLength = (MainFavImages == null) ? 0 : MainFavImages.Count;
+            int MaxLength = 8;
+            if (MainFavLength > 0)
+            {
+                if (MainFavLength >= MaxLength)
+                   MainFavImages.Remove(MainFavImages.Last());
+
+                MainFavImages.Add(newImageUri);                
+            }
+            Debug.WriteLine("Favourites Updated");
+        }   
+
+        // Query database and load the collections and list used by the pivot pages.
+        public void LoadCollectionsFromDatabase()
+        {
+
+            // Specify the query for all to-do items in the database.
+            var ImagesItemsInDb = from ImageItem image in ImageDB.NPImages
+                                  select image;
+            Debug.WriteLine("Query Create");
+
+            // Query the database and load all to-do items.
+            AllImageItems = new ObservableCollection<ImageItem>(ImagesItemsInDb);
+            Debug.WriteLine("Images now in Collection");
+
+            this.IsDataLoaded = true;
+        }        
+         **/
+
+
         #endregion
     }
 }

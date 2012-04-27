@@ -11,6 +11,10 @@ using Microsoft.Phone;
 using System.IO;
 using Microsoft.Phone.Info;
 using ExifLib;
+using System.Windows.Navigation;
+using NoraPic.Includes;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace NoraPic
 {
@@ -49,7 +53,8 @@ namespace NoraPic
             InitializeComponent();
 
             // Set the data context of the listbox control to the sample data
-            DataContext = App.ViewModel;
+            if (DataContext == null)
+                DataContext = App.ViewModel;
             this.Loaded += new RoutedEventHandler(MainPage_Loaded);
 
             //Create new event handler for capturing a photo
@@ -59,12 +64,33 @@ namespace NoraPic
             //CurrentStatus = "Start";
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            // Show some context when no notes available
+            showHideTips(Settings.Favourites.Value.Count);
+        }
+
         // Load data for the ViewModel Items
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            // Load all images from the DB to memory (observable collection)
             if (!App.ViewModel.IsDataLoaded)
             {
                 App.ViewModel.LoadCollectionsFromDatabase();
+            }
+            
+            // Load all the Favourite images to an observable collection
+            if (!App.ViewModel.IsAllFavLoaded)
+            {
+                App.ViewModel.LoadAllFavs();
+            }
+
+            // Load the favourites in the main panorama
+            if (!App.ViewModel.IsMainFavLoaded)
+            {
+                App.ViewModel.LoadMainFavs();
             }
 
             // When the page is instantiated, we'll begin the process
@@ -131,7 +157,8 @@ namespace NoraPic
                 string imgSize = (capturedImage.Length / 1024).ToString();
                 long memoryRemaining = (long) DeviceExtendedProperties.GetValue("ApplicationCurrentMemoryUsage");
                 MessageBox.Show("Mem: " + (memoryRemaining/1048576) + Environment.NewLine + "Size: " + imgSize + "kb" + Environment.NewLine + "Dim: " + wid + "x" + hei);
-                StoreImageItem();             
+                StoreImageItem();
+                showHideTips(App.ViewModel.MainFavImages.Count);
                 //myImage.Source = bmp;
                 //myImage.Stretch = Stretch.Uniform;
                 // swap UI element states
@@ -253,6 +280,21 @@ namespace NoraPic
             TempImageItem.SaveImage(capturedImage, imgThumbnail);
 
             App.ViewModel.AddImageItem(TempImageItem);
+            App.ViewModel.AddFavImage(TempImageItem.thumbPath);
+        }
+
+        private void showHideTips(int listCount)
+        {
+            if (listCount == 0)
+            {
+                EmptyRecentBlock.Visibility = System.Windows.Visibility.Visible;
+                EmptyFavouriteBlock.Visibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                EmptyRecentBlock.Visibility = System.Windows.Visibility.Collapsed;
+                EmptyFavouriteBlock.Visibility = System.Windows.Visibility.Collapsed;
+            }
         }
 
         #endregion
@@ -286,9 +328,15 @@ namespace NoraPic
             ctask.Show();
         }
 
-        private void Test_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        private void AllPhotos_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
-            MessageBox.Show("HI");
+            NavigationService.Navigate(new Uri("/Pages/Pictures.xaml", UriKind.Relative));
+        }
+
+
+        private void AllFavourite_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            NavigationService.Navigate(new Uri("/Pages/Pictures.xaml?id=2", UriKind.Relative));
         }
 
         #endregion

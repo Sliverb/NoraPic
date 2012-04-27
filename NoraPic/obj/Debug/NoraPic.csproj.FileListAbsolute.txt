@@ -17,3 +17,5 @@ C:\Users\baolatun\Documents\Visual Studio 2010\Projects\NoraPic\NoraPic\Bin\Debu
 C:\Users\baolatun\Documents\Visual Studio 2010\Projects\NoraPic\NoraPic\Bin\Debug\Microsoft.Phone.Controls.Toolkit.xml
 C:\Users\baolatun\Documents\Visual Studio 2010\Projects\NoraPic\NoraPic\Bin\Debug\ExifLib.dll
 C:\Users\baolatun\Documents\Visual Studio 2010\Projects\NoraPic\NoraPic\obj\Debug\NoraPic.csprojResolveAssemblyReference.cache
+C:\Users\baolatun\Documents\Visual Studio 2010\Projects\NoraPic\NoraPic\Bin\Debug\AdvSetting.dll
+C:\Users\baolatun\Documents\Visual Studio 2010\Projects\NoraPic\NoraPic\obj\Debug\Pages\Pictures.g.i.cs

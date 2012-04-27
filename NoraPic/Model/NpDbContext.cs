@@ -120,7 +120,26 @@ namespace NoraPic.Model
 				{
                     NotifyPropertyChanging("DateTaken");
                     _DateTaken = value;
+                    this.DisplayDateTimeString = _DateTaken.ToString("y");
                     NotifyPropertyChanged("DateTaken");
+				}
+			}
+		}
+
+        // Define display date for grouping by month (April 2012): private field, public property, and database column.
+        private string _DisplayDateTimeString;
+
+        [Column(Storage="_DisplayDateTimeString", DbType="NVarChar(100) NOT NULL")]
+		public string DisplayDateTimeString
+		{
+			get { return this._DisplayDateTimeString; }
+			set
+			{
+				if (_DisplayDateTimeString != value)
+				{
+                    NotifyPropertyChanging("DisplayDateTimeString");
+                    _DisplayDateTimeString = value;
+                    NotifyPropertyChanged("DisplayDateTimeString");
 				}
 			}
 		}
@@ -220,8 +239,8 @@ namespace NoraPic.Model
         #endregion
 
         // Image URI
-        public string imageUri { get; set; }
-        public string thumbUri { get; set; }
+        public string imagePath { get; set; }
+        public string thumbPath { get; set; }
 
         // Storage methods
         # region Methods dealing with ISO Storage
@@ -229,9 +248,6 @@ namespace NoraPic.Model
         public void SaveImage(Stream image, Stream thumbnail)
         {
             CreateURIs();
-
-            string imgPath = imageFolder + System.IO.Path.DirectorySeparatorChar.ToString() + ImageName;
-            string thumbPath = thumbFolder + System.IO.Path.DirectorySeparatorChar.ToString() + ImageName; 
 
             BitmapImage imgBitmap = new BitmapImage();
             imgBitmap.SetSource(image);
@@ -249,7 +265,7 @@ namespace NoraPic.Model
                     appStore.CreateDirectory(thumbFolder);
                 }  
 
-                using (IsolatedStorageFileStream imgStream = appStore.CreateFile(imgPath))
+                using (IsolatedStorageFileStream imgStream = appStore.CreateFile(imagePath))
                 {
                     capedImage.SaveJpeg(imgStream, capedImage.PixelWidth, capedImage.PixelHeight, 0, 100);
                     imgStream.Close();
@@ -269,8 +285,8 @@ namespace NoraPic.Model
             imageUri = String.Format("/{0}/{1}", imageFolder, ImageName);
             thumbUri = String.Format("/{0}/{1}", thumbFolder, ImageName);
             **/
-            imageUri = imageFolder + System.IO.Path.DirectorySeparatorChar.ToString() + ImageName;
-            thumbUri = thumbFolder + System.IO.Path.DirectorySeparatorChar.ToString() + ImageName; 
+            imagePath = imageFolder + System.IO.Path.DirectorySeparatorChar.ToString() + ImageName;
+            thumbPath = thumbFolder + System.IO.Path.DirectorySeparatorChar.ToString() + ImageName; 
         }
 
         public WriteableBitmap LoadImage()

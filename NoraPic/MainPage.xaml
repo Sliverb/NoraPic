@@ -10,12 +10,11 @@
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     xmlns:local="clr-namespace:NoraPic.Includes"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="800" 
-    d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait"  Orientation="Portrait"
-    shell:SystemTray.IsVisible="False">
+    shell:SystemTray.IsVisible="False" Loaded="MainPage_Loaded">
 
     <phone:PhoneApplicationPage.Resources>
         <local:IsoImageConverter x:Key="IsoImageCoverter"/>
@@ -48,11 +47,11 @@
                             </ControlTemplate>                        
                         </Button.Template>                    
                     </Button>
-                    <TextBlock Name="Test"
+                    <TextBlock Name="AllPhotos"
                                Margin="{StaticResource PhoneMargin}"
                                Text="All Photos"
                                Style="{StaticResource PhoneTextExtraLargeStyle}"
-                               Tap="Test_Tap"
+                               Tap="AllPhotos_Tap"
                         />
                 </StackPanel>
             </controls:PanoramaItem>
@@ -61,6 +60,14 @@
             <controls:PanoramaItem Header="favourites" Orientation="Horizontal">
                 <!--Double line list with image placeholder and text wrapping -->
                 <StackPanel>
+                    <TextBlock Name="EmptyFavouriteBlock"
+                               Text="Have some special pictures? Add them to Favourites, and we'll use them to personalize your phone."
+                               TextWrapping="Wrap"
+                               Width="400"
+                               Margin="24,0,12,0"
+                               Visibility="Collapsed"
+                               Style="{StaticResource PhoneTextGroupHeaderStyle}"
+                       />
                     <ItemsControl Name="WrappedImages" 
                                   Margin="0,0,-12,0" 
                                   ItemsSource="{Binding MainFavImages}" 
@@ -77,9 +84,14 @@
                             <DataTemplate>
                                     <!--Replace rectangle with image -->
                                     <StackPanel Width="200">
-                                    <Image Name="PrevHolder" Height="160" Width="160" Stretch="UniformToFill" Source="{Binding thumbUri, Converter={StaticResource IsoImageCoverter}}" Margin="0,0,0,0">
+                                    <Image Name="PrevHolder" 
+                                           Height="160" 
+                                           Width="160" 
+                                           Stretch="UniformToFill" 
+                                           Source="{Binding Converter={StaticResource IsoImageCoverter}}" 
+                                           Margin="0,0,0,0">
                                     </Image>
-                                    <TextBlock Text="{Binding DateTaken}" TextWrapping="NoWrap"  HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding}" TextWrapping="NoWrap"  HorizontalAlignment="Center"/>
                                     </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -87,29 +99,44 @@
                     <TextBlock Text="All Favourites" 
                                Name="AllFavs" 
                                Margin="{StaticResource PhoneMargin}"
-                               Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+                               Style="{StaticResource PhoneTextExtraLargeStyle}"
+                               Tap="AllFavourite_Tap"/>
                 </StackPanel>
             </controls:PanoramaItem>
 
             <!--Panorama item three -->
             <controls:PanoramaItem Header="recent">
             <!--Double line list with text wrapping -->
-                <ListBox Margin="0,0,-12,0" ItemsSource="{Binding Items}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Margin="0,0,0,17" Width="432" Height="78">
-                                <TextBlock Text="{Binding LineOne}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                                <TextBlock Text="{Binding LineTwo}" TextWrapping="Wrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                <StackPanel>                   
+                    <TextBlock Name="EmptyRecentBlock"
+                               Text="Nothing here yet. Go take some photos :)"
+                               TextWrapping="Wrap"
+                               Margin="24,0,12,0"
+                               Visibility="Collapsed"
+                               Style="{StaticResource PhoneTextGroupHeaderStyle}"
+                       />
+
+                    <ListBox Margin="0,0,-12,0" ItemsSource="{Binding MainFavImages}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,0,0,17" Width="432" Height="78">
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
             </controls:PanoramaItem>
 
             <!--Panorama item three-->
             <controls:PanoramaItem Header="extras">
                 <!--Double line list with text wrapping-->
                 <ListBox Margin="0,0,-12,0">
+                    <TextBlock Text="Status" 
+                               TextWrapping="Wrap" 
+                               Margin="{StaticResource PhoneMargin}"
+                               Style="{StaticResource PhoneTextExtraLargeStyle}"/>                    
                     <TextBlock Text="Settings" 
                                TextWrapping="Wrap" 
                                Margin="{StaticResource PhoneMargin}"

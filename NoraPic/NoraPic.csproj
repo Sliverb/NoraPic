@@ -48,6 +48,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AdvSetting, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="ExifLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone" />
     <Reference Include="Microsoft.Phone.Controls" />
@@ -66,7 +67,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Includes\GroupToBrushValueConverter.cs" />
+    <Compile Include="Includes\ImagesInCategory.cs" />
     <Compile Include="Includes\IsoImageConverter.cs" />
+    <Compile Include="Includes\Settings.cs" />
     <Compile Include="Includes\Slide.cs" />
     <Compile Include="Includes\WriteableBitmapBaseExtentions.cs" />
     <Compile Include="Includes\WriteableBitmapTransformationExtentions.cs" />
@@ -74,6 +78,9 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\NpDbContext.cs" />
+    <Compile Include="Pages\Pictures.xaml.cs">
+      <DependentUpon>Pictures.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\ItemViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -92,6 +99,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </DesignData>
+    <Page Include="Pages\Pictures.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AppManifest.xml" />
@@ -106,6 +117,7 @@
     </Content>
     <Resource Include="PanoramaBackground.png" />
     <Content Include="Images\cam_icon.png" />
+    <Content Include="Lib\AdvSetting.dll" />
     <Content Include="Lib\ExifLib.dll" />
     <Content Include="SplashScreenImage.jpg" />
   </ItemGroup>

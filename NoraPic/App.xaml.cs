@@ -114,6 +114,18 @@ namespace NoraPic
             {
                 App.ViewModel.LoadCollectionsFromDatabase();
             }
+           
+            // Load all the Favourite images to an observable collection
+            if (!App.ViewModel.IsAllFavLoaded)
+            {
+                App.ViewModel.LoadAllFavs();
+            }
+
+            // Load the favourites in the main panorama
+            if (!App.ViewModel.IsMainFavLoaded)
+            {
+                App.ViewModel.LoadMainFavs();
+            }
         }
 
         // Code to execute when the application is deactivated (sent to background)
