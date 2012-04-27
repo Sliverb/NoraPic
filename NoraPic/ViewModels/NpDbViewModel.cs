@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using NoraPic.Includes;
 using System.Windows;
+using System;
+using System.IO.IsolatedStorage;
 
 namespace NoraPic.ViewModels
 {
@@ -53,8 +55,11 @@ namespace NoraPic.ViewModels
             get { return _AllImageItems; }
             set
             {
-                _AllImageItems = value;
-                NotifyPropertyChanged("AllImageItems");
+                if (_AllImageItems != value)
+                {
+                    _AllImageItems = value;
+                    NotifyPropertyChanged("AllImageItems");
+                }
             }
         }
 
@@ -65,8 +70,11 @@ namespace NoraPic.ViewModels
             get { return _AllFavImages; }
             set
             {
-                _AllFavImages = value;
-                NotifyPropertyChanged("AllFavImages");
+                if (_AllFavImages != value)
+                {
+                    _AllFavImages = value;
+                    NotifyPropertyChanged("AllFavImages");
+                }
             }
         }
 
@@ -77,8 +85,11 @@ namespace NoraPic.ViewModels
             get { return _MainFavImages; }
             set
             {
-                _MainFavImages = value;
-                NotifyPropertyChanged("MainFavImages");
+                if (_MainFavImages != value)
+                {
+                    _MainFavImages = value;
+                    NotifyPropertyChanged("MainFavImages");
+                }
             }
         }
 
@@ -88,6 +99,7 @@ namespace NoraPic.ViewModels
 
             // Specify the query for images in the database and grouped by "month year".
             var ImagesItemsInDb = from ImageItem image in ImageDB.NPImages
+                                  orderby image.DateTaken.Year, image.DateTaken.Month
                                   group image by image.DisplayDateTimeString;
 
             Debug.WriteLine("Query Create");
@@ -97,17 +109,25 @@ namespace NoraPic.ViewModels
             // Query the database and load all images and group them.
             Deployment.Current.Dispatcher.BeginInvoke(() =>
             {
-                foreach (var monthYear in ImagesItemsInDb)
+                if (ImagesItemsInDb.Count() > 0)
                 {
-                    ImagesInCategory group = new ImagesInCategory(monthYear.Key);
-                    if (monthYear.Count() != 0)
+                    foreach (var monthYear in ImagesItemsInDb)
                     {
-                        foreach (ImageItem image in monthYear)
+                        ImagesInCategory group = new ImagesInCategory(monthYear.Key);
+                        if (monthYear.Count() != 0)
                         {
-                            image.CreateURIs();
-                            group.Add(image);                           
+                            foreach (ImageItem image in monthYear)
+                            {
+                                image.CreateURIs();
+                                group.Add(image);
+                            }
                         }
+                        AllImageItems.Add(group);
                     }
+                }
+                else
+                {
+                    ImagesInCategory group = new ImagesInCategory(DateTime.Now.ToString("y"));
                     AllImageItems.Add(group);
                 }
 
@@ -170,6 +190,11 @@ namespace NoraPic.ViewModels
             {
                 rawCategory.FirstOrDefault().Add(newImageItem);
             }
+            else
+            {
+                ImagesInCategory newCategory = new ImagesInCategory(newImageItem.DisplayDateTimeString);
+                AllImageItems.Add(newCategory);
+            }
         
             Debug.WriteLine("Image Added");
         }
@@ -179,6 +204,7 @@ namespace NoraPic.ViewModels
             //Add the image to the list of all favourites
             //Settings.Favourites.Value.Add(newImageUri);
             AllFavImages.Add(newImageUri);
+            IsolatedStorageSettings.ApplicationSettings.Save();
 
             //Update the list of main faorites to have the latest added favourites
             // remove the last one and add in the new one

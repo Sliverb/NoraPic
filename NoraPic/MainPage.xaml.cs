@@ -37,8 +37,8 @@ namespace NoraPic
         Stream capturedImage;
         Stream imgThumbnail;
         int imgAngle;
-        int wid;
-        int hei;
+        int wid = 0;
+        int hei = 0;
          
 
         // In this case,since we're not working with a device, I'll just

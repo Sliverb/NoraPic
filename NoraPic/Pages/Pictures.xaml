@@ -89,7 +89,7 @@
                     
                     <toolkit:LongListSelector.ItemTemplate>                    
                         <DataTemplate>
-                            <StackPanel Height="93" Width="93" Margin="6,6" Background="Yellow">
+                            <StackPanel Height="93" Width="93" Margin="6,6">
                                 <Image Width="90" 
                                         Height="90" 
                                         Stretch="UniformToFill" 
@@ -127,12 +127,11 @@
                     </ListBox.ItemsPanel>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Height="93" Width="93" Margin="6,6" Background="Yellow">
+                            <StackPanel Height="93" Width="93" Margin="6,6">
                                 <Image Width="90" 
                                         Height="90" 
                                         Stretch="UniformToFill" 
                                         Source="{Binding Converter={StaticResource IsoImageCoverter}}"/>
-                                <TextBlock Text="{Binding}" TextWrapping="NoWrap"  HorizontalAlignment="Center"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
